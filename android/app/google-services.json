@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "495386290186",
+    "project_id": "coswan-73d75",
+    "storage_bucket": "coswan-73d75.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:495386290186:android:0b584fea843db9c05857f3",
+        "android_client_info": {
+          "package_name": "com.example.coswan"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAJb5WXRrIzkU70sP5Dcb3kkv9Ck0epEBE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
