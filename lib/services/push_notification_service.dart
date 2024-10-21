@@ -5,8 +5,9 @@ import 'dart:math';
 
 import 'package:app_settings/app_settings.dart';
 import 'package:coswan/providers/notificatiion_provider.dart';
+import 'package:coswan/screens/login_page.dart';
 import 'package:coswan/screens/notifiactionview.dart';
-import 'package:coswan/services/notification_api.dart';
+import 'package:coswan/storageservice.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -70,11 +71,24 @@ class PushNotificationService {
     );
 
     await _flutterLocalNotificationsPlugin.initialize(initializationSetting,
-    
         onDidReceiveNotificationResponse: (payload) {
-          Navigator.pushReplacement(context,
-        MaterialPageRoute(builder: (context) => const NotificationView()));
-        });
+      StorageService().storage.initStorage;
+      bool isloggedIn = StorageService().storage.hasData('email');
+      if (isloggedIn) {
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const NotificationViewScreen()),
+          // (Route<dynamic> route) => Navigator.of(context).pu // Clear all routes
+        );
+      } else {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const LoginPage(),
+          ),
+          (Route<dynamic> route) => false,
+        );
+      }
+    });
   }
 
 // in  app active state
@@ -87,7 +101,7 @@ class PushNotificationService {
       print('Message data: ${message.data}');
 
       if (message.notification != null) {
-        Provider.of<NotificationProvider>(context, listen: false)
+        Provider.of<NotificationDataProvider>(context, listen: false)
             .notificationCount++;
         print('Message also contained a notification: ${message.notification}');
       }
@@ -96,11 +110,11 @@ class PushNotificationService {
         // local notification call
         initLocalNotification(context, message);
         // to call the notification collection
-        NotificationAPI.notificationApi(context);
+      //  NotificationAPI.notificationApi(context);
         showNotification(message);
       } else {
         // to call the notification collection
-        NotificationAPI.notificationApi(context);
+      //  NotificationAPI.notificationApi(context);
         showNotification(message);
       }
     });
@@ -159,9 +173,8 @@ class PushNotificationService {
     if (initialMessage != null) {
       // to call the notification collection
 
-      NotificationAPI.notificationApi(context);
-      Provider.of<NotificationProvider>(context, listen: false)
-          .notificationCount++;
+      // NotificationAPI.notificationApi(context);
+      Provider.of<NotificationDataProvider>(context, listen: false).notificationCount++;
 
       handleMessage(context, initialMessage);
     }
@@ -173,8 +186,24 @@ class PushNotificationService {
 
   void handleMessage(BuildContext context, RemoteMessage message) {
     // to call the notification collection
-    NotificationAPI.notificationApi(context);
-    Navigator.pushReplacement(context,
-        MaterialPageRoute(builder: (context) => const NotificationView()));
+ //   NotificationAPI.notificationApi(context);
+    // Navigator.pushReplacement(context,
+    //     MaterialPageRoute(builder: (context) => const NotificationView()));
+    StorageService().storage.initStorage;
+    bool isloggedIn = StorageService().storage.hasData('email');
+    if (isloggedIn) {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => const NotificationViewScreen()),
+        //  (Route<dynamic> route) => false, // Clear all routes
+      );
+    } else {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const LoginPage(),
+        ),
+        (Route<dynamic> route) => false,
+      );
+    }
   }
 }

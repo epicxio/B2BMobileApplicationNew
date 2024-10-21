@@ -208,7 +208,7 @@ class CartAPI {
         }
       }
     } catch (e) {
-      throw e;
+     rethrow;
     }
   }
 

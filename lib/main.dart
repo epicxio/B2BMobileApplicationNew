@@ -20,9 +20,9 @@ import 'package:provider/provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    systemNavigationBarColor: Colors.transparent,
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual);
+  SystemChrome.setSystemUIOverlayStyle( SystemUiOverlayStyle(
+    systemNavigationBarColor: Color.fromRGBO(144, 110, 16, 1),
     systemNavigationBarIconBrightness: Brightness.light,
   ));
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -68,7 +68,7 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider(create: (context) => VendorProvider()),
           ChangeNotifierProvider(
               create: (context) => DistributorOrderProvider()),
-          ChangeNotifierProvider(create: (context) => NotificationProvider()),
+          ChangeNotifierProvider(create: (context) => NotificationDataProvider()),
           ChangeNotifierProvider(create: (context) => UserProvider()),
           ChangeNotifierProvider(create: (context) => CartProvider()),
           ChangeNotifierProvider(create: ((context) => WhislistProvider())),

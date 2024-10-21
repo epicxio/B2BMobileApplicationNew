@@ -303,16 +303,15 @@ class _HomePageState extends State<HomePage> {
                   GestureDetector(onTap: () {
                     //   APIRoute().triggerNotificaton();
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: ((context) => const NotificationView())));
-                  }, child: Consumer<NotificationProvider>(
+                        builder: ((context) => const NotificationViewScreen())));
+                  }, child: Consumer<NotificationDataProvider>(
                       builder: (context, notification, ch) {
-                    return Provider.of<NotificationProvider>(context)
-                                .notificationCount >
+                    return Provider.of<NotificationDataProvider>(context).notificationCount >
                             0
                         ? Badge(
                             backgroundColor: const Color.fromRGBO(255, 0, 0, 1),
                             label: Text(
-                                '${Provider.of<NotificationProvider>(context).notificationCount}'),
+                                '${Provider.of<NotificationDataProvider>(context).notificationCount}'),
                             child: const Icon(Icons.notifications_outlined))
                         : const Icon(Icons.notifications_outlined);
                   })),
@@ -1119,7 +1118,7 @@ class _HomePageState extends State<HomePage> {
     if (mounted) {
       if (dataloading) {
         carouselimage.clear();
-          Provider.of<NotificationProvider>(context, listen: false).clearData();
+          // Provider.of<NotificationDataProvider>(context, listen: false).clearData();
      Provider.of<CartProvider>(context, listen: false).clearData();
    Provider.of<WhislistProvider>(context, listen: false).clearData();
         setState(() {});

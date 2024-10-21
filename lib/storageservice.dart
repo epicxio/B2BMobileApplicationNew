@@ -17,7 +17,7 @@ class StorageService {
 
   String? getEmail() {
     return storage.read('email');
-  }
+  } 
 
   String? getPWD() {
     return storage.read('password');

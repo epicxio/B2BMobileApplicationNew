@@ -30,8 +30,8 @@ package ='com.example.coswan'>
     <application
         android:label="coswan"
         android:name="${applicationName}"
-        android:icon="@mipmap/launcher_icon">
-         
+        android:icon="@mipmap/launcher_icon"
+        android:usesCleartextTraffic="false">
         
         <activity
             android:name=".MainActivity"

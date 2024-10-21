@@ -1,141 +1,125 @@
 import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:coswan/screens/distributor_pages/orderstatustabbar.dart';
 import 'package:coswan/models/notification_model.dart';
-import 'package:coswan/screens/cartpage.dart';
-import 'package:coswan/screens/orderhistorypage.dart';
-import 'package:coswan/screens/productdetailspage.dart';
 import 'package:coswan/providers/notificatiion_provider.dart';
 import 'package:coswan/providers/userprovider.dart';
+import 'package:coswan/screens/cartpage.dart';
+import 'package:coswan/screens/distributor_pages/orderstatustabbar.dart';
+import 'package:coswan/screens/orderhistorypage.dart';
+import 'package:coswan/screens/productdetailspage.dart';
 import 'package:coswan/services/notification_api.dart';
 import 'package:coswan/utils/lineargradient.dart';
 import 'package:coswan/widgets/shimmer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class NotificationView extends StatefulWidget {
-  const NotificationView({super.key});
+class NotificationViewScreen extends StatefulWidget {
+  const NotificationViewScreen({super.key});
 
   @override
-  State<NotificationView> createState() => _NotificationViewState();
+  State<NotificationViewScreen> createState() => _NotificationViewScreenState();
 }
 
-class _NotificationViewState extends State<NotificationView> {
+class _NotificationViewScreenState extends State<NotificationViewScreen> {
   bool isloading = true;
-  // Timer? timer;
+  late List<NotificationModel> notificationData;
 
   @override
   void initState() {
-    //  timer = Timer.periodic(Duration(seconds: 2), (timer) {
-    NotificationAPI.notificationApi(context);
-    setState(() {
-      isloading = false;
-    });
-    // });
-
+    _refresh();
     super.initState();
   }
 
   @override
-  void dispose() {
-    //timer?.cancel();
-
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final user = Provider.of<UserProvider>(context).user;
-
-    final notification = Provider.of<NotificationProvider>(context);
-    final List<NotificationModel> notificationData =
-        notification.notificationData;
-    return Container(
-      color: Theme.of(context).primaryColor,
-      child: SafeArea(
-        bottom: false,
-        child: Container(
-          decoration: const BoxDecoration(gradient: gradient),
-          child: PopScope(
-            canPop: true,
-            onPopInvoked: (pop) {
-              notification.clearCount();
-              print('returned');
-            },
-            child: Scaffold(
+   
+    final user = Provider.of<UserProvider>(context, listen: false).user;
+    // final List<NotificationModel> notificationData =
+    //     notification.notificationData;
+    return Consumer<NotificationDataProvider>(
+        builder: (context, notification, child) {
+           final notificationProvider =
+        Provider.of<NotificationDataProvider>(context);
+      return Container(
+        color: Theme.of(context).primaryColor,
+        child: SafeArea(
+          bottom: false,
+          child: Container(
+            decoration: const BoxDecoration(gradient: gradient),
+            child: PopScope(
+              canPop: true,
+              onPopInvokedWithResult: (didpop, result) {
+                notification.clearCount();
+                // print('returned');
+              },
+              child: Scaffold(
                 extendBody: true,
-              backgroundColor: Colors.transparent,
-              appBar: AppBar(
-                forceMaterialTransparency: true,
-                elevation: 0,
                 backgroundColor: Colors.transparent,
-                title: const Text(
-                  'Notifications',
-                ),
-                leading: GestureDetector(
-                  onTap: () => Navigator.of(context).pop(),
-                  child: const Icon(
-                    Icons.arrow_back_ios,
+                appBar: AppBar(
+                  forceMaterialTransparency: true,
+                  elevation: 0,
+                  backgroundColor: Colors.transparent,
+                  title: const Text(
+                    'Notifications',
                   ),
+                  leading: IconButton(
+                    icon: const Icon(Icons.arrow_back_ios),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  actions: [
+                    Container(
+                        margin: EdgeInsets.symmetric(
+                            horizontal: 15.w, vertical: 8.h),
+                        padding: EdgeInsets.only(
+                            left: 20.w, right: 20.w, top: 5.h, bottom: 5.h),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.circular(30.r),
+                          color: const Color.fromRGBO(210, 159, 73, 1),
+                        ),
+                        child: Text(
+                          '${notificationProvider.notificationCount} New',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500, fontSize: 16.sp),
+                        ))
+                  ],
                 ),
-                actions: [
-                  Container(
-                      margin:
-                          EdgeInsets.symmetric(horizontal: 15.w, vertical: 8.h),
-                      padding: EdgeInsets.only(
-                          left: 20.w, right: 20.w, top: 5.h, bottom: 5.h),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.circular(30.r),
-                        color: const Color.fromRGBO(210, 159, 73, 1),
-                      ),
-                      child: Text(
-                        '${Provider.of<NotificationProvider>(context).notificationCount} New',
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500, fontSize: 16.sp),
-                      ))
-                ],
+                body: SafeArea(
+                    child: isloading
+                        ? const Center(child: CircularProgressIndicator())
+                        : RefreshIndicator(
+                            triggerMode: RefreshIndicatorTriggerMode.anywhere,
+                            onRefresh: _refresh,
+                            child: ListView.builder(
+                                itemCount: notificationData.length,
+                                itemBuilder: (context, index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: user.role == 'Store Owner'
+                                        ? storeOwnerListtiles(
+                                            index, notificationData)
+                                        : purchaseManagerListtiles(
+                                            index, notificationData),
+                                  );
+                                }),
+                          )),
               ),
-              body: SafeArea(
-                  child: isloading ? const  Center(child: CircularProgressIndicator()): Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  // Text(
-                  //   'Mark all as read',
-                  //   style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w400),
-                  // ),
-                  Expanded(
-                    child: RefreshIndicator(
-                      triggerMode: RefreshIndicatorTriggerMode.anywhere,
-                      onRefresh: _refresh,
-                      child: ListView.builder(
-                          itemCount: notificationData.length,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: user.role == 'Store Owner'
-                                  ? storeOwnerListtiles(index)
-                                  : purchaseManagerListtiles(index),
-                            );
-                          }),
-                    ),
-                  )
-                ],
-              )),
             ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 
-  Widget storeOwnerListtiles(
-    int index,
-  ) {
-    final notification = Provider.of<NotificationProvider>(context);
-    final notificationData = notification.notificationData;
+  Widget storeOwnerListtiles(int index, List<NotificationModel> notification) {
+    // final notification =
+    //     Provider.of<NotificationProvider>(context, listen: true);
+    final dataofNotification = notification[index];
     Color determineBackgroundColor(String status) {
       switch (status) {
         case 'Completed':
@@ -159,8 +143,7 @@ class _NotificationViewState extends State<NotificationView> {
       }
     }
 
-    String createdAtString = notificationData[index].createdAt;
-    print(createdAtString);
+    String createdAtString = dataofNotification.createdAt;
 
     // Parse the string into a DateTime object
     DateTime dateTime = DateTime.parse(createdAtString);
@@ -175,7 +158,11 @@ class _NotificationViewState extends State<NotificationView> {
     String formattedDate =
         isToday ? 'Today' : DateFormat('dd-MMM-yyyy').format(dateTime);
 
-    final dataofNotification = notificationData[index];
+//    return
+    // Consumer<NotificationProvider>(
+    //   builder: (context, notification, child) {
+    //     final dataofNotification = notification.notificationData [index];
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 12.h),
       color: Colors.white,
@@ -194,7 +181,6 @@ class _NotificationViewState extends State<NotificationView> {
                   placeholder: (context, url) =>
                       ShimmerEffect(conHeight: 98.h, conWidth: 165.w),
                 ),
-              
               ),
               SizedBox(
                 width: 8.h,
@@ -216,7 +202,6 @@ class _NotificationViewState extends State<NotificationView> {
                               fontSize: 22.sp, fontWeight: FontWeight.w500),
                         ),
                       ),
-                     
                     ],
                   ),
                   SizedBox(
@@ -224,7 +209,6 @@ class _NotificationViewState extends State<NotificationView> {
                   ),
                   Row(
                     children: [
-                     
                       Text(
                         formattedDate,
                         style: TextStyle(
@@ -260,7 +244,6 @@ class _NotificationViewState extends State<NotificationView> {
                                 (dataofNotification.approvalStatus),
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(color: Colors.white),
-                               
                               ),
                             )
                           : const SizedBox()
@@ -290,16 +273,21 @@ class _NotificationViewState extends State<NotificationView> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     ElevatedButton(
-                        onPressed: () {
-                          productAccepAPI(
+                        onPressed: () async {
+                          final res = await productAccepAPI(
                               dataofNotification.cartId,
                               dataofNotification.productId,
                               dataofNotification.variant_quantity.toString(),
                               'decline',
                               dataofNotification.variant_SKU,
                               dataofNotification.parentSKU_childSKU,
-                              index,dataofNotification.variantType,
+                              index,
+                              dataofNotification.variantType,
                               'Product declined Successfully');
+                          if (res.statusCode == 200) {
+                            notificationData.removeAt(index);
+                            setState(() {});
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
@@ -316,8 +304,8 @@ class _NotificationViewState extends State<NotificationView> {
                               fontWeight: FontWeight.w600),
                         )),
                     ElevatedButton(
-                        onPressed: () {
-                          productAccepAPI(
+                        onPressed: () async {
+                          final res = await productAccepAPI(
                               dataofNotification.cartId,
                               dataofNotification.productId,
                               dataofNotification.variant_quantity.toString(),
@@ -327,6 +315,12 @@ class _NotificationViewState extends State<NotificationView> {
                               index,
                               dataofNotification.variantType,
                               'Product Accepted Successfully');
+
+                          if (res.statusCode == 200) {
+                            setState(() {
+                              notificationData.removeAt(index);
+                            });
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
@@ -345,7 +339,8 @@ class _NotificationViewState extends State<NotificationView> {
                         onPressed: () {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => ProductDetailsPage(
-                                variantqunatityStock: dataofNotification.product_quantity,
+                                    variantqunatityStock:
+                                        dataofNotification.product_quantity,
                                     productid:
                                         dataofNotification.productId.toString(),
                                     productimage:
@@ -405,17 +400,19 @@ class _NotificationViewState extends State<NotificationView> {
                 )
         ],
       ),
+      //    );
+      //    },
     );
   }
 
 //// purchse manager notification tile
   Widget purchaseManagerListtiles(
-    int index,
-  ) {
+      int index, List<NotificationModel> notification) {
     final user = Provider.of<UserProvider>(context).user;
-    final notification = Provider.of<NotificationProvider>(context);
-    final notificationData = notification.notificationData;
-    final dataofNotification = notificationData[index];
+    // final notification =
+    //     Provider.of<NotificationProvider>(context, listen: true);
+    // final notificationData = notification.notificationData;
+    final dataofNotification = notification[index];
     Color determineBackgroundColor(String status) {
       switch (status) {
         case 'Completed':
@@ -439,7 +436,7 @@ class _NotificationViewState extends State<NotificationView> {
       }
     }
 
-    String createdAtString = notificationData[index].createdAt;
+    String createdAtString = dataofNotification.createdAt;
     print(createdAtString);
 
     // Parse the string into a DateTime object
@@ -631,21 +628,42 @@ class _NotificationViewState extends State<NotificationView> {
     );
   }
 
-  Future<void> productAccepAPI(String cartId, productId, quantity, endPoint,
-      String variantSku, String parentChildSku, index,String variantType , String toast) async {
-    NotificationAPI.productAcceptAndDeclineAPI(context, cartId, productId,
-        quantity, endPoint, variantSku, parentChildSku, index, variantType, toast);
+  Future<Response> productAccepAPI(
+      String cartId,
+      productId,
+      quantity,
+      endPoint,
+      String variantSku,
+      String parentChildSku,
+      index,
+      String variantType,
+      String toast) async {
+    final res = await NotificationAPI.productAcceptAndDeclineAPI(
+        context,
+        cartId,
+        productId,
+        quantity,
+        endPoint,
+        variantSku,
+        parentChildSku,
+        index,
+        variantType,
+        toast);
+    if (res.statusCode == 200) {
+      setState(() {});
+    }
+    return res;
   }
+
   Future _refresh() async {
-    isloading = true;
     setState(() {
-      
+      isloading = true;
     });
-    NotificationAPI.notificationApi(context);
-    
-    isloading  = false; 
+    notificationData = await NotificationAPI.notificationApi(context);
+
+    await Future.delayed(const Duration(milliseconds: 500));
     setState(() {
-      
+      isloading = !isloading;
     });
   }
 }

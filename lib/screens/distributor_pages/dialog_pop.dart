@@ -20,7 +20,7 @@ class DialogPop extends StatefulWidget {
       required this.cartId});
 
   @override
-  State<DialogPop> createState() => _DialogPopState(); 
+  State<DialogPop> createState() => _DialogPopState();
 }
 
 class _DialogPopState extends State<DialogPop> {
@@ -235,7 +235,7 @@ class _DialogPopState extends State<DialogPop> {
                         ],
                       ),
                     ),
-                     imagepick!.isEmpty
+                    imagepick!.isEmpty
                         ? const SizedBox()
                         : SizedBox(
                             width: MediaQuery.of(context).size.width,
@@ -262,7 +262,6 @@ class _DialogPopState extends State<DialogPop> {
                                                 ),
                                               ),
                                             ),
-                                           
                                           ],
                                         ),
                                       );
@@ -276,22 +275,21 @@ class _DialogPopState extends State<DialogPop> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                            CircleAvatar(
-                       backgroundColor: Theme.of(context).primaryColor,
-                      
-                       child: Center(
-                         child: IconButton(
-                           onPressed: () {
-                           pickImageForStatusUpdate();
-                           },
-                           icon:  Icon(
-                             Icons.camera_alt_outlined,
-                             size: 30.r,
-                           ),
-                           color: Colors.white,
-                         ),
-                       ),
-                     ),
+                          CircleAvatar(
+                            backgroundColor: Theme.of(context).primaryColor,
+                            child: Center(
+                              child: IconButton(
+                                onPressed: () {
+                                  pickImageForStatusUpdate();
+                                },
+                                icon: Icon(
+                                  Icons.camera_alt_outlined,
+                                  size: 25.r,
+                                ),
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
                           ElevatedButton(
                               onPressed: () {
                                 Navigator.of(context).pop();
@@ -313,13 +311,25 @@ class _DialogPopState extends State<DialogPop> {
                               onPressed: () {
                                 print(widget.pageendPoint);
                                 print(widget.field);
-
-                                orderStatusUpdate(
-                                    widget.cartId,
-                                    widget.field,
-                                    widget.field,
-                                    commentController.text,
-                                    textEditingController.text);},
+                                if (commentController.text.isNotEmpty) {
+                                  orderStatusUpdate(
+                                      widget.cartId,
+                                      widget.field,
+                                      widget.field,
+                                      commentController.text,
+                                      textEditingController.text);
+                                } else {
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(
+                                    content: Text(
+                                      'Enter the comment',
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 14.sp),
+                                    ),
+                                    backgroundColor: Colors.red,
+                                  ));
+                                }
+                              },
                               style: ElevatedButton.styleFrom(
                                   backgroundColor:
                                       Theme.of(context).primaryColor,
@@ -333,11 +343,9 @@ class _DialogPopState extends State<DialogPop> {
                                     fontSize: 12.sp,
                                     fontWeight: FontWeight.w500),
                               )),
-                             
                         ],
                       ),
                     ),
-                   
                   ],
                 ),
               )
@@ -459,7 +467,7 @@ class _DialogPopState extends State<DialogPop> {
     );
   }
 
-Future<void> pickImageForStatusUpdate() async {
+  Future<void> pickImageForStatusUpdate() async {
     try {
       final ImagePicker imagePicker = ImagePicker();
       final XFile? selectedImage =
@@ -473,6 +481,7 @@ Future<void> pickImageForStatusUpdate() async {
       rethrow;
     }
   }
+
   Future<void> orderStatusUpdate(String cartId, String status, String toastmsg,
       String comment, String variantQuantity) async {
     await OrderDistributor.orderStatusUpdate(

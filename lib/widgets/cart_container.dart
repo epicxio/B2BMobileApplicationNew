@@ -235,7 +235,8 @@ class _CartContainerState extends State<CartContainer> {
                                     contentPadding:
                                         EdgeInsets.symmetric(horizontal: 7.w),
                                     border: const OutlineInputBorder(
-                                        borderSide: BorderSide.none),
+                                  
+                                      borderSide: BorderSide.none),
                                   ),
                                 ),
                               ),

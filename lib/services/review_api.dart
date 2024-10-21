@@ -3,11 +3,9 @@ import 'package:coswan/providers/userprovider.dart';
 import 'package:coswan/utils/route.dart';
 import 'package:coswan/utils/toast.dart';
 import 'package:flutter/material.dart';
-import 'package:image_compression/image_compression.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
-import 'package:video_compress/video_compress.dart';
 
 class ReviewApi {
   static Future<void> review(BuildContext context, String star, String comment,
@@ -36,36 +34,31 @@ class ReviewApi {
       // Add photo file if not null
 
       if (photo != null) {
-        final compressedPhoto = await compressImage(photo);
-        if (compressedPhoto != null) {
+      
           request.files.add(http.MultipartFile(
             'image',
-            compressedPhoto.readAsBytes().asStream(),
-            compressedPhoto.lengthSync(),
+            photo.readAsBytes().asStream(),
+            photo.lengthSync(),
             filename: photo.path.split('/').last,
             contentType: MediaType('image', 'jpeg'),
           ));
-        }
+        
       }
-
-      //  compress a video file
-
       // Add video file if not null
 
       if (video != null) {
-        final compressedVideo = await compressVideo(video);
-        if (compressedVideo != null) {
+       
           request.files.add(
             http.MultipartFile(
               'video',
-              compressedVideo.readAsBytes().asStream(),
-              compressedVideo.lengthSync(),
+              video.readAsBytes().asStream(),
+              video.lengthSync(),
               filename: video.path.split('/').last,
               contentType: MediaType('video', 'mp4'),
             ),
           );
         }
-      }
+      
 
       //set headers
 
@@ -86,30 +79,30 @@ class ReviewApi {
   }
 }
 
-Future<File?> compressImage(File file) async {
-  final config = ImageFileConfiguration(
-      input: ImageFile(filePath: file.path, rawBytes: file.readAsBytesSync()),
-      config: const Configuration(
-        pngCompression: PngCompression.bestSpeed,
-        outputType: OutputType.jpg, // Output format
-      ));
+// Future<File?> compressImage(File file) async {
+//   final config = ImageFileConfiguration(
+//       input: ImageFile(filePath: file.path, rawBytes: file.readAsBytesSync()),
+//       config: const Configuration(
+//         pngCompression: PngCompression.bestSpeed,
+//         outputType: OutputType.jpg, // Output format
+//       ));
 
-  //compress the image
+//   //compress the image
 
-  final compressedImage = await compressInQueue(config);
+//   final compressedImage = await compressInQueue(config);
 
-  if (compressedImage != null) {
-    final compressedFile = File(file.path)
-      ..writeAsBytesSync(compressedImage.rawBytes);
+//   if (compressedImage != null) {
+//     final compressedFile = File(file.path)
+//       ..writeAsBytesSync(compressedImage.rawBytes);
 
-    return compressedFile;
-  }
+//     return compressedFile;
+//   }
 
-  return null;
-}
+//   return null;
+// }
 
-Future<File?> compressVideo(File videoFile) async {
-  MediaInfo? info = await VideoCompress.compressVideo(videoFile.path,
-      quality: VideoQuality.LowQuality, deleteOrigin: false);
-  return info!.file;
-}
+// Future<File?> compressVideo(File videoFile) async {
+//   MediaInfo? info = await VideoCompress.compressVideo(videoFile.path,
+//       quality: VideoQuality.LowQuality, deleteOrigin: false);
+//   return info!.file;
+// }

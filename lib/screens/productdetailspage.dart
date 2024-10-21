@@ -200,16 +200,16 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 GestureDetector(onTap: () {
                   //   APIRoute().triggerNotificaton();
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: ((context) => const NotificationView())));
-                }, child: Consumer<NotificationProvider>(
+                      builder: ((context) => const NotificationViewScreen())));
+                }, child: Consumer<NotificationDataProvider>(
                     builder: (context, notification, ch) {
-                  return Provider.of<NotificationProvider>(context)
+                  return Provider.of<NotificationDataProvider>(context)
                               .notificationCount >
                           0
                       ? Badge(
                           backgroundColor: const Color.fromRGBO(255, 0, 0, 1),
                           label: Text(
-                              '${Provider.of<NotificationProvider>(context).notificationCount}'),
+                              '${Provider.of<NotificationDataProvider>(context).notificationCount}'),
                           child: const Icon(Icons.notifications_outlined))
                       : const Icon(Icons.notifications_outlined);
                 })),
@@ -269,6 +269,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                     wishlist.any((product) => product.id == widget.productid)
                         ? Icons.favorite
                         : Icons.favorite_border,
+                        color: Theme.of(context).primaryColor,
                   );
                 })),
                                     ],

@@ -46,23 +46,28 @@ class LoginAPI {
       if (res.statusCode == 200) {
         user.setUSer(res.body);
 
-        if (isChecked) {
-          final storageService = StorageService();
-          await storageService.saveUserLoginDataForReme(identifier, password);
-        
-        }
+        //   if (true) {
+        final storageService = StorageService();
+        await storageService.saveUserLoginDataForReme(identifier, password);
+
+        //   }
         user.user.role == "Distributor"
-            ? navigator.push(MaterialPageRoute(
-                builder: (context) => const DashboradDistribtor()))
-            : navigator.push(NavigationTransition(const HomePage()));
-      
+            ? navigator.pushAndRemoveUntil(
+                MaterialPageRoute(
+                    builder: (context) => const DashboradDistribtor()),
+                (Route<dynamic> route) => false,
+              )
+            : navigator.pushAndRemoveUntil(
+                NavigationTransition(const HomePage()),
+                (Route<dynamic> route) => false,
+              );
       } else {
         final snackBar = SnackBar(
           content: Text(
             jsonDecode(res.body)['error'],
             style: const TextStyle(color: Colors.white),
           ),
-          duration: const  Duration(seconds: 3),
+          duration: const Duration(seconds: 3),
           behavior: SnackBarBehavior.floating,
           backgroundColor: Colors.red,
         );

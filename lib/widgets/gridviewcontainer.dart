@@ -187,8 +187,7 @@ class _GridViewContainerState extends State<GridViewContainer> {
                       children: [
                         Container(
                           height: 35.h,
-                          width: 95.w,
-                        
+                          width: 98.w,
                           decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(50.r),

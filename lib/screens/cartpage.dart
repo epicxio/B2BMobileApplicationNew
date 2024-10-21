@@ -145,12 +145,18 @@ class _CartPageState extends State<CartPage> {
                     ? const Center(
                         child: Text('No items in cart'),
                       )
-                    : ListView.builder(
+                    : ListView.separated(
+
+                        shrinkWrap: true,
                         padding: EdgeInsets.symmetric(
                           horizontal: 14.w,
                           vertical: 5.h,
                         ),
                         itemCount: cart.length,
+                        separatorBuilder: (context,index){
+                          return  SizedBox(height: 15.h);
+
+                        },
                         itemBuilder: (context, index) {
                           final cartIndex = cart[index];
                           //  int totalcount = cart[index]['quantity'];
@@ -200,7 +206,7 @@ class _CartPageState extends State<CartPage> {
                             child: Padding(
                               padding: const EdgeInsets.only(right: 5.0),
                               child: SizedBox(
-                                height: 210.h,
+                                // height: 210.h,
                                 child: Slidable(
                                   endActionPane: ActionPane(
                                       extentRatio: 0.25,
@@ -229,7 +235,7 @@ class _CartPageState extends State<CartPage> {
                                             cartIndex.variant_price.toString(),
                                         qunatity:
                                             cartIndex.variant_quantity.toInt(),
-                                        status: cartIndex.status.toString(),
+                                        status: cartIndex.status.toString(),  
                                         title: cartIndex.title.toString(),
                                         weight:
                                             cartIndex.variant_weight.toString(),

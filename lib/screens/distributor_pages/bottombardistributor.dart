@@ -41,7 +41,7 @@ class _BottomBarDistributorState extends State<BottomBarDistributor> {
           GestureDetector(
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const NotificationView()));
+                  builder: (context) => const NotificationViewScreen()));
             },
             child: bottombarItems(
                 SvgPicture.asset("assets/icons/ic_bottomBarNotifications.svg"), 'Notifications'),

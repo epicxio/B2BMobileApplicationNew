@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:coswan/models/order_model.dart';
 import 'package:coswan/providers/cartprovider.dart';
-import 'package:coswan/providers/notificatiion_provider.dart';
 import 'package:coswan/screens/paymentsuccessful.dart';
 import 'package:coswan/providers/userprovider.dart';
 import 'package:coswan/services/cart_api.dart';
@@ -61,7 +60,7 @@ class OrderApi {
         print(orderId);
         print(transactionId);
         cart.clearData();
-          Provider.of<NotificationProvider>(context, listen: false).clearData();
+        //  Provider.of<NotificationDataProvider>(context, listen: false).clearData();
      Provider.of<CartProvider>(context, listen: false).clearData();
         navigator.pushReplacement(MaterialPageRoute(
             builder: (context) => PaymentSucessful(

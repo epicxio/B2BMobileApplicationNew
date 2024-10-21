@@ -6,7 +6,6 @@ import 'package:coswan/providers/notificatiion_provider.dart';
 import 'package:coswan/providers/userprovider.dart';
 import 'package:coswan/providers/vendor_provider.dart';
 import 'package:coswan/providers/whislist_provider.dart';
-import 'package:coswan/services/fcm_update_api.dart';
 import 'package:coswan/utils/route.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,7 +17,7 @@ class LogoutAPI {
     final address = Provider.of<AddressProvider>(context, listen: false);
     
     final distrbutor = Provider.of<WhislistProvider>(context, listen: false);
-    final notification = Provider.of<NotificationProvider>(context, listen: false);
+    final notification = Provider.of<NotificationDataProvider>(context, listen: false);
     final cart = Provider.of<CartProvider>(context, listen: false);
     final wishlist = Provider.of<WhislistProvider>(context, listen: false);
     final vendor = Provider.of<VendorProvider>(context, listen: false);
@@ -37,15 +36,15 @@ class LogoutAPI {
           // 'Authorization': 'Bearer ${userprovider.token}'
         },
       );
-      userprovider.user.role == 'Distributor'
-          ? null
-          : FcmUpdateAPI.fcmUpdateAPI(context, 'logout');
+      // userprovider.user.role == 'Distributor'
+      //     ? null
+      //     : FcmUpdateAPI.fcmUpdateAPI(context, 'logout');
       userprovider.clearUserData();
       address.clearData();
       cart.clearData();
       wishlist.clearData();
       distrbutor.clearData();
-      notification.clearData();
+    //  notification.clearData();
       vendor.clearData();
       print(res.body);
       print("jpwdfsdfkljsdfklj:${res.statusCode}");

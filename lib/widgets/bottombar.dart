@@ -72,7 +72,7 @@ class _BottomBarWigetpageState extends State<BottomBarWidgetpage> {
     return SizedBox(
       child: Column(
         children: [
-          SizedBox(width: 44.w, height: 38.h, child: icon),
+          SizedBox(width: 44.w, height: 35.h, child: icon),
           FittedBox(
             child: Text(
               label,

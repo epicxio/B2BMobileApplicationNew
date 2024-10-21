@@ -35,7 +35,7 @@ class CustomNotifyToast {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Sucess',
+                        'Success',
                         style: TextStyle(
                             fontSize: 16.sp, fontWeight: FontWeight.w600),
                       ),

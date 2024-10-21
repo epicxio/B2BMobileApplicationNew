@@ -1,0 +1,6 @@
+projectKey=test_coswan_1
+serverUrl=http://localhost:9000
+serverVersion=10.7.0.96327
+dashboardUrl=http://localhost:9000/dashboard?id=test_coswan_1
+ceTaskId=8aeabc6d-fe0c-439a-b13a-75b9a1a9eb79
+ceTaskUrl=http://localhost:9000/api/ce/task?id=8aeabc6d-fe0c-439a-b13a-75b9a1a9eb79

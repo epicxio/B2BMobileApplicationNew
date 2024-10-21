@@ -5,7 +5,6 @@ import 'package:coswan/screens/login_page.dart';
 import 'package:coswan/screens/swipepageview/swipepageone.dart';
 import 'package:coswan/screens/swipepageview/swipepagetwo.dart';
 import 'package:coswan/screens/swipepageview/swipepagthree.dart';
-import 'package:coswan/utils/navigation_transition.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -87,8 +86,17 @@ class _SwipePageViewState extends State<SwipePageView> {
                 actions: [
                   TextButton(
                     onPressed: () {
-                      Navigator.pushReplacement(
-                          context, NavigationTransition(const LoginPage()));
+                      if (StorageService().storage.hasData('email')) {
+        final email = StorageService().getEmail()!.toString();
+        final password = StorageService().getPWD()!.toString();
+        postData(email, password, true);
+        print(email);
+        // Navigator.pushReplacement(
+        //     context, MaterialPageRoute(builder: (context) => const HomePage()));
+      } else {
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const LoginPage()));
+      }
                     },
                     child: Text(
                       'Skip',

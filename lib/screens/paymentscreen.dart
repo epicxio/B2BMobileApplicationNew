@@ -49,6 +49,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w500),
               ),
               centerTitle: true,
+              leading: IconButton(onPressed: (){
+                Navigator.pop(context);
+              }, icon: Icon(Icons.arrow_back_ios)),
             ),
             body: Padding(
               padding: const EdgeInsets.all(25),
@@ -234,44 +237,54 @@ class _PaymentScreenState extends State<PaymentScreen> {
       fontSize: 14.sp,
       fontWeight: FontWeight.w500,
     );
-    return Container(
-      padding: const EdgeInsets.all(10),
-      height: 55.h,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: const Color.fromRGBO(183, 181, 181, 1)),
-        borderRadius: BorderRadius.circular(3.r),
-      ),
-      child: Row(
-        children: [
-          Image.asset(paymentIcon),
-          SizedBox(
-            width: width.w,
-          ),
-          Text(
-            title,
-            style: txtstyle,
-          ),
-          Expanded(
-              child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Radio(
-                  value: radioval,
-                  groupValue: selectedPayment,
-                  onChanged: (valu) {
-                    setState(() {
-                      selectedPayment = valu!;
-                      method = 'offline';
-                      print(selectedPayment);
-                      print(widget.cartIds);
-                      print(widget.addressID);
-                      print(method);
-                    });
-                  }),
-            ],
-          ))
-        ],
+    return GestureDetector(
+      onTap: (){
+        
+       selectedPayment = radioval;
+   method = title;
+   setState(() {
+     
+   });
+      },
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        height: 55.h,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: const Color.fromRGBO(183, 181, 181, 1)),
+          borderRadius: BorderRadius.circular(3.r),
+        ),
+        child: Row(
+          children: [
+            Image.asset(paymentIcon),
+            SizedBox(
+              width: width.w,
+            ),
+            Text(
+              title,
+              style: txtstyle,
+            ),
+            Expanded(
+                child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Radio(
+                    value: radioval,
+                    groupValue: selectedPayment,
+                    onChanged: (valu) {
+                      setState(() {
+                        selectedPayment = valu!;
+                        method = 'offline';
+                        print(selectedPayment);
+                        print(widget.cartIds);
+                        print(widget.addressID);
+                        print(method);
+                      });
+                    }),
+              ],
+            ))
+          ],
+        ),
       ),
     );
   }
